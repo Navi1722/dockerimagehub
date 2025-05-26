@@ -1,2 +1,6 @@
 Flask
 pytest
+pandas
+flask_cors
+google.generativeai
+dotenv
