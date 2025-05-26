@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incident Report Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+         :root {
+            --primary: #4361ee;
+            --primary-light: #e0e7ff;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .logo span {
+            color: var(--dark);
+        }
+        
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+        
+        .upload-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        .file-upload {
+            border: 2px dashed var(--gray);
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload:hover {
+            border-color: var(--primary);
+        }
+        
+        .file-upload i {
+            font-size: 48px;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+        
+        .file-upload p {
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .file-upload.active {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+        
+        .file-upload.success {
+            border-color: var(--success);
+        }
+        
+        .file-upload.error {
+            border-color: var(--danger);
+        }
+        
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-size: 16px;
+        }
+        
+        .btn:hover {
+            background-color: #3a56d4;
+        }
+        
+        .btn:disabled {
+            background-color: var(--gray);
+            cursor: not-allowed;
+        }
+        
+        .report-section {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .report-tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .tab {
+            padding: 15px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--gray);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+            height: 500px;
+            overflow-y: auto;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .report-content {
+            white-space: pre-wrap;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+        
+        .markdown-content {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .markdown-content h1,
+        .markdown-content h2,
+        .markdown-content h3 {
+            color: var(--primary);
+            margin: 15px 0 10px;
+        }
+        
+        .markdown-content h1 {
+            font-size: 24px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 5px;
+        }
+        
+        .markdown-content h2 {
+            font-size: 20px;
+        }
+        
+        .markdown-content h3 {
+            font-size: 16px;
+        }
+        
+        .markdown-content pre {
+            background-color: #f8fafc;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        
+        .markdown-content code {
+            font-family: 'Courier New', monospace;
+            background-color: #f8fafc;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .markdown-content ul,
+        .markdown-content ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .markdown-content li {
+            margin-bottom: 5px;
+        }
+        
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 10px;
+            line-height: 1.5;
+        }
+        
+        .user-message {
+            margin-left: auto;
+            background-color: var(--primary-light);
+            border-radius: 10px 10px 0 10px;
+            color: var(--dark);
+        }
+        
+        .bot-message {
+            margin-right: auto;
+            background-color: #f1f5f9;
+            border-radius: 10px 10px 10px 0;
+        }
+        
+        .message-time {
+            font-size: 11px;
+            color: var(--gray);
+            margin-top: 5px;
+            text-align: right;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            outline: none;
+            font-size: 16px;
+        }
+        
+        .chat-input button {
+            margin-left: 10px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .incident-list {
+            margin-top: 20px;
+        }
+        
+        .incident-item {
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .incident-item:hover {
+            border-color: var(--primary);
+        }
+        
+        .incident-item.active {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+        
+        .incident-id {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .incident-details {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+        
+        .status.pending {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+        
+        .status.completed {
+            background-color: #d1fae5;
+            color: #059669;
+        }
+        
+        .progress-container {
+            margin-top: 20px;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background-color: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-size: 14px;
+            color: var(--gray);
+            text-align: center;
+        }
+        /* KPI Dashboard Styles */
+        
+        .kpi-dashboard {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .kpi-card {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .kpi-card.total {
+            border-left-color: var(--info);
+        }
+        
+        .kpi-card.resolution {
+            border-left-color: var(--success);
+        }
+        
+        .kpi-card.detection {
+            border-left-color: var(--warning);
+        }
+        
+        .kpi-card.mttr {
+            border-left-color: var(--danger);
+        }
+        
+        .kpi-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .kpi-label {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        .kpi-unit {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        .root-cause-list {
+            margin-top: 15px;
+        }
+        
+        .root-cause-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .root-cause-name {
+            font-weight: 500;
+        }
+        
+        .root-cause-count {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .refresh-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        /* Timeline Styles */
+        
+        .timeline-container {
+            height: 500px;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .timeline {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            background-color: var(--primary-light);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -1px;
+        }
+        
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: white;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            top: 15px;
+            z-index: 1;
+        }
+        
+        .left {
+            left: 0;
+        }
+        
+        .right {
+            left: 50%;
+        }
+        
+        .left::after {
+            right: -8px;
+        }
+        
+        .right::after {
+            left: -8px;
+        }
+        
+        .timeline-content {
+            padding: 15px;
+            background-color: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .timeline-time {
+            font-size: 12px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .timeline-component {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .timeline-message {
+            font-size: 14px;
+        }
+        
+        .log-level {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-right: 5px;
+        }
+        
+        .log-level.DEBUG {
+            background-color: #5b8ff9;
+            color: white;
+        }
+        
+        .log-level.INFO {
+            background-color: #5ad8a6;
+            color: white;
+        }
+        
+        .log-level.WARNING {
+            background-color: #f6bd16;
+            color: white;
+        }
+        
+        .log-level.ERROR {
+            background-color: #e8684a;
+            color: white;
+        }
+        
+        .log-level.CRITICAL {
+            background-color: #a01c5a;
+            color: white;
+        }
+        /* Loading states */
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--primary-light);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            .timeline::after {
+                left: 31px;
+            }
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            .timeline-item::after {
+                left: 25px;
+            }
+            .left::after,
+            .right::after {
+                left: 25px;
+            }
+            .right {
+                left: 0%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">Incident<span>Reporter</span></div>
+            <div>
+                <i class="fas fa-bell"></i>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="main-layout">
+            <div class="upload-section">
+                <h2 class="section-title">Upload Incident Logs</h2>
+                <div id="file-upload" class="file-upload">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drag & Drop your CSV file here</p>
+                    <p>or</p>
+                    <p><strong>Click to browse</strong></p>
+                    <input type="file" id="csv-file" accept=".csv" style="display: none;">
+                </div>
+                <button id="generate-btn" class="btn" disabled>Generate Reports</button>
+
+                <div class="progress-container" id="progress-container" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress" id="progress-bar"></div>
+                    </div>
+                    <div class="progress-text" id="progress-text">Processing: 0%</div>
+                </div>
+
+                <div class="kpi-dashboard" id="kpi-dashboard" style="display: none;">
+                    <h3 class="section-title">Incident KPIs</h3>
+                    <div class="kpi-grid">
+                        <div class="kpi-card total">
+                            <div class="kpi-label">Total Incidents</div>
+                            <div class="kpi-value" id="total-incidents">0</div>
+                        </div>
+                        <div class="kpi-card resolution">
+                            <div class="kpi-label">Avg. Resolution</div>
+                            <div class="kpi-value" id="avg-resolution">0</div>
+                            <div class="kpi-unit">minutes</div>
+                        </div>
+                        <div class="kpi-card detection">
+                            <div class="kpi-label">Avg. Detection</div>
+                            <div class="kpi-value" id="avg-detection">0</div>
+                            <div class="kpi-unit">minutes</div>
+                        </div>
+                        <div class="kpi-card mttr">
+                            <div class="kpi-label">MTTR</div>
+                            <div class="kpi-value" id="mttr">0</div>
+                            <div class="kpi-unit">minutes</div>
+                        </div>
+                    </div>
+
+                    <h4 style="margin-top: 20px;">Top Root Causes</h4>
+                    <div class="root-cause-list" id="root-cause-list">
+                        <!-- Root causes will be added here -->
+                    </div>
+
+                    <button class="refresh-btn" id="refresh-kpi">
+                        <i class="fas fa-sync-alt"></i> Refresh KPIs
+                    </button>
+                </div>
+
+                <div class="incident-list" id="incident-list">
+                    <!-- Incident items will be added here -->
+                </div>
+            </div>
+
+            <div class="report-section">
+                <div class="report-tabs">
+                    <div class="tab active" data-tab="report">Report</div>
+                    <div class="tab" data-tab="timeline">Timeline</div>
+                    <div class="tab" data-tab="chat">Chat</div>
+                </div>
+
+                <div class="tab-content active" id="report-tab">
+                    <div class="report-content" id="report-content">
+                        <p>Select an incident to view its report</p>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="timeline-tab">
+                    <div class="timeline-container" id="timeline-container">
+                        <p>Select an incident to view its timeline</p>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="chat-tab">
+                    <div class="chat-container">
+                        <div class="chat-messages" id="chat-messages">
+                            <div class="message bot-message">
+                                Upload and generate a report to start chatting about incidents.
+                            </div>
+                        </div>
+                        <div class="chat-input">
+                            <input type="text" id="chat-input" placeholder="Type your question here..." disabled>
+                            <button id="send-btn" disabled><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+                    // DOM elements
+                    const fileUpload = document.getElementById('file-upload');
+                    const csvFileInput = document.getElementById('csv-file');
+                    const generateBtn = document.getElementById('generate-btn');
+                    const progressContainer = document.getElementById('progress-container');
+                    const progressBar = document.getElementById('progress-bar');
+                    const progressText = document.getElementById('progress-text');
+                    const incidentList = document.getElementById('incident-list');
+                    const reportContent = document.getElementById('report-content');
+                    const timelineContainer = document.getElementById('timeline-container');
+                    const tabs = document.querySelectorAll('.tab');
+                    const tabContents = document.querySelectorAll('.tab-content');
+                    const chatMessages = document.getElementById('chat-messages');
+                    const chatInput = document.getElementById('chat-input');
+                    const sendBtn = document.getElementById('send-btn');
+                    const kpiDashboard = document.getElementById('kpi-dashboard');
+                    const refreshKpiBtn = document.getElementById('refresh-kpi');
+
+                    // KPI elements
+                    const totalIncidentsEl = document.getElementById('total-incidents');
+                    const avgResolutionEl = document.getElementById('avg-resolution');
+                    const avgDetectionEl = document.getElementById('avg-detection');
+                    const mttrEl = document.getElementById('mttr');
+                    const rootCauseList = document.getElementById('root-cause-list');
+
+                    // Global variables
+                    let currentSessionId = null;
+                    let activeIncidentId = null;
+
+                    // Event listeners
+                    fileUpload.addEventListener('click', () => csvFileInput.click());
+                    csvFileInput.addEventListener('change', handleFileUpload);
+                    generateBtn.addEventListener('click', generateReports);
+                    sendBtn.addEventListener('click', sendMessage);
+                    chatInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') sendMessage();
+                    });
+                    refreshKpiBtn.addEventListener('click', fetchKPIData);
+
+                    // Tab switching
+                    tabs.forEach(tab => {
+                        tab.addEventListener('click', () => {
+                            tabs.forEach(t => t.classList.remove('active'));
+                            tabContents.forEach(c => c.classList.remove('active'));
+
+                            tab.classList.add('active');
+                            const tabId = tab.getAttribute('data-tab') + '-tab';
+                            document.getElementById(tabId).classList.add('active');
+
+                            // If timeline tab is selected, load timeline data
+                            if (tabId === 'timeline-tab' && activeIncidentId) {
+                                loadTimelineData();
+                            }
+                        });
+                    });
+
+                    // File upload handler
+                    async function handleFileUpload(e) {
+                        const file = e.target.files[0];
+                        if (!file) return;
+
+                        // Update UI
+                        fileUpload.classList.add('active');
+                        fileUpload.innerHTML = '<i class="fas fa-spinner fa-spin"></i><p>Processing file...</p>';
+                        generateBtn.disabled = true;
+
+                        try {
+                            const formData = new FormData();
+                            formData.append('file', file);
+
+                            const response = await fetch('/upload', {
+                                method: 'POST',
+                                body: formData
+                            });
+
+                            if (!response.ok) {
+                                throw new Error(await response.text());
+                            }
+
+                            const data = await response.json();
+
+                            if (data.error) {
+                                throw new Error(data.error);
+                            }
+
+                            currentSessionId = data.session_id;
+                            generateBtn.disabled = false;
+
+                            // Update UI
+                            fileUpload.innerHTML = `
+                        <i class="fas fa-check-circle"></i>
+                        <p>${file.name}</p>
+                        <p>Ready to generate reports</p>
+                    `;
+                            fileUpload.classList.add('success');
+
+                            // Create incident list
+                            incidentList.innerHTML = '';
+                            data.incident_ids.forEach(incidentId => {
+                                const incidentItem = document.createElement('div');
+                                incidentItem.className = 'incident-item';
+                                incidentItem.innerHTML = `
+                            <div class="incident-id">Incident ${incidentId}</div>
+                            <div class="incident-details">
+                                ${incidentId} • Pending
+                            </div>
+                            <div class="status pending">Pending</div>
+                        `;
+                                incidentItem.addEventListener('click', () => selectIncident(incidentId));
+                                incidentList.appendChild(incidentItem);
+                            });
+
+                            // Show KPI dashboard
+                            kpiDashboard.style.display = 'block';
+                            fetchKPIData();
+
+                        } catch (error) {
+                            console.error('Upload error:', error);
+                            fileUpload.innerHTML = `
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>Error: ${error.message}</p>
+                        <p><strong>Click to try again</strong></p>
+                    `;
+                            fileUpload.classList.remove('active');
+                            fileUpload.classList.add('error');
+                        }
+                    }
+
+                    // Fetch KPI data
+                    async function fetchKPIData() {
+                        if (!currentSessionId) return;
+
+                        try {
+                            const response = await fetch(`/api/kpi/dashboard?session_id=${currentSessionId}`);
+                            const data = await response.json();
+
+                            if (data.error) {
+                                throw new Error(data.error);
+                            }
+
+                            // Update KPI dashboard
+                            totalIncidentsEl.textContent = data.total_incidents;
+                            avgResolutionEl.textContent = data.avg_resolution_time_minutes.toFixed(1);
+                            avgDetectionEl.textContent = data.avg_detection_time_minutes.toFixed(1);
+                            mttrEl.textContent = data.mttr_minutes.toFixed(1);
+
+                            // Update root causes
+                            rootCauseList.innerHTML = '';
+                            data.top_root_causes.forEach(cause => {
+                                const item = document.createElement('div');
+                                item.className = 'root-cause-item';
+                                item.innerHTML = `
+                            <span class="root-cause-name">${cause.cause}</span>
+                            <span class="root-cause-count">${cause.count}</span>
+                        `;
+                                rootCauseList.appendChild(item);
+                            });
+
+                        } catch (error) {
+                            console.error('Error fetching KPI data:', error);
+                        }
+                    }
+
+                    // Generate reports
+                    async function generateReports() {
+                        if (!currentSessionId) return;
+
+                        progressContainer.style.display = 'block';
+                        generateBtn.disabled = true;
+
+                        const incidentItems = document.querySelectorAll('.incident-item');
+                        const totalIncidents = incidentItems.length;
+                        let processed = 0;
+
+                        for (const item of incidentItems) {
+                            const incidentId = item.querySelector('.incident-id').textContent.replace('Incident ', '');
+
+                            try {
+                                // Start generation
+                                const response = await fetch('/generate_report', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        session_id: currentSessionId,
+                                        incident_id: incidentId
+                                    })
+                                });
+
+                                if (!response.ok) {
+                                    throw new Error(await response.text());
+                                }
+
+                                // Update progress
+                                processed++;
+                                const progress = Math.round((processed / totalIncidents) * 100);
+                                progressBar.style.width = `${progress}%`;
+                                progressText.textContent = `Processing: ${progress}%`;
+
+                                // Check for completion
+                                await waitForReportCompletion(incidentId, item);
+
+                            } catch (error) {
+                                console.error('Error generating report:', error);
+                            }
+                        }
+
+                        generateBtn.textContent = 'Reports Generated';
+                        fetchKPIData();
+                    }
+
+                    // Wait for report completion
+                    async function waitForReportCompletion(incidentId, item) {
+                        return new Promise(async(resolve) => {
+                            const checkInterval = setInterval(async() => {
+                                try {
+                                    const response = await fetch(`/get_report?session_id=${currentSessionId}&incident_id=${incidentId}`);
+                                    const data = await response.json();
+
+                                    if (data.status === 'completed') {
+                                        clearInterval(checkInterval);
+                                        item.querySelector('.status').className = 'status completed';
+                                        item.querySelector('.status').textContent = 'Completed';
+
+                                        if (!activeIncidentId) {
+                                            selectIncident(incidentId);
+                                        }
+                                        resolve();
+                                    }
+                                } catch (error) {
+                                    console.error('Error checking report:', error);
+                                    clearInterval(checkInterval);
+                                    resolve();
+                                }
+                            }, 1000);
+                        });
+                    }
+
+                    // Select incident
+                    async function selectIncident(incidentId) {
+                        activeIncidentId = incidentId;
+
+                        // Update UI
+                        document.querySelectorAll('.incident-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        event.currentTarget.classList.add('active');
+
+                        // Load report
+                        try {
+                            reportContent.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+                            const response = await fetch(`/get_report?session_id=${currentSessionId}&incident_id=${incidentId}`);
+                            const data = await response.json();
+
+                            if (data.status === 'completed') {
+                                // Create a div to parse markdown
+                                const markdownDiv = document.createElement('div');
+                                markdownDiv.className = 'markdown-content';
+                                markdownDiv.innerHTML = data.report;
+                                reportContent.innerHTML = '';
+                                reportContent.appendChild(markdownDiv);
+
+                                // Enable chat
+                                chatInput.disabled = false;
+                                sendBtn.disabled = false;
+
+                                // Load chat history
+                                loadChatHistory();
+
+                                // Load timeline if that tab is active
+                                if (document.querySelector('.tab.active').getAttribute('data-tab') === 'timeline') {
+                                    loadTimelineData();
+                                }
+                            } else {
+                                reportContent.innerHTML = '<p>Report still being generated...</p>';
+                            }
+                        } catch (error) {
+                            console.error('Error loading report:', error);
+                            reportContent.innerHTML = '<p>Error loading report</p>';
+                        }
+                    }
+
+                    // Load timeline data
+                    async function loadTimelineData() {
+                        try {
+                            timelineContainer.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+                            const response = await fetch(`/get_logs_for_timeline?session_id=${currentSessionId}&incident_id=${activeIncidentId}`);
+                            const data = await response.json();
+
+                            if (data.success) {
+                                renderTimeline(data.logs, data.root_cause);
+                            } else {
+                                timelineContainer.innerHTML = '<p>Error loading timeline data</p>';
+                            }
+                        } catch (error) {
+                            console.error('Error loading timeline:', error);
+                            timelineContainer.innerHTML = '<p>Error loading timeline</p>';
+                        }
+                    }
+
+                    // Render timeline
+                    function renderTimeline(logs, rootCause) {
+                        timelineContainer.innerHTML = `
+                    <div class="timeline">
+                        <div class="timeline-item left">
+                            <div class="timeline-content">
+                                <div class="timeline-time">Root Cause Identified</div>
+                                <div class="timeline-message">${rootCause}</div>
+                            </div>
+                        </div>
+                        ${logs.map((log, index) => `
+                            <div class="timeline-item ${index % 2 === 0 ? 'left' : 'right'}">
+                                <div class="timeline-content">
+                                    <div class="timeline-time">${new Date(log.timestamp).toLocaleString()}</div>
+                                    <div class="timeline-component">${log.component}</div>
+                                    <div>
+                                        <span class="log-level ${log.log_level}">${log.log_level}</span>
+                                        <span class="timeline-message">${log.message}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Load chat history
+            async function loadChatHistory() {
+                try {
+                    const response = await fetch(`/get_chat_history?session_id=${currentSessionId}&incident_id=${activeIncidentId}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        chatMessages.innerHTML = '';
+                        data.messages.forEach(msg => {
+                            const messageDiv = document.createElement('div');
+                            messageDiv.className = `message ${msg.role === 'user' ? 'user-message' : 'bot-message'}`;
+                            messageDiv.innerHTML = `
+                                ${msg.content}
+                                <div class="message-time">${new Date(msg.timestamp).toLocaleTimeString()}</div>
+                            `;
+                            chatMessages.appendChild(messageDiv);
+                        });
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
+                } catch (error) {
+                    console.error('Error loading chat:', error);
+                }
+            }
+
+            // Send message
+            async function sendMessage() {
+                const message = chatInput.value.trim();
+                if (!message || !activeIncidentId) return;
+
+                // Clear input immediately
+                chatInput.value = '';
+                chatInput.disabled = true;
+                sendBtn.disabled = true;
+
+                // Add user message
+                addMessage(message, 'user');
+
+                // Show typing indicator
+                const typingIndicator = document.createElement('div');
+                typingIndicator.className = 'message bot-message typing';
+                typingIndicator.innerHTML = '<i class="fas fa-ellipsis-h"></i>';
+                chatMessages.appendChild(typingIndicator);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                try {
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            session_id: currentSessionId,
+                            incident_id: activeIncidentId,
+                            message: message
+                        })
+                    });
+
+                    // Remove typing indicator
+                    const typing = document.querySelector('.typing');
+                    if (typing) chatMessages.removeChild(typing);
+
+                    if (!response.ok) {
+                        throw new Error(await response.text());
+                    }
+
+                    const data = await response.json();
+
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+
+                    // Add bot response
+                    addMessage(data.response, 'bot');
+
+                } catch (error) {
+                    // Remove typing indicator
+                    const typing = document.querySelector('.typing');
+                    if (typing) chatMessages.removeChild(typing);
+
+                    addMessage(`Error: ${error.message}`, 'bot');
+                } finally {
+                    chatInput.disabled = false;
+                    sendBtn.disabled = false;
+                    chatInput.focus();
+                }
+            }
+
+            function addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}-message`;
+                messageDiv.innerHTML = `
+                    ${text}
+                    <div class="message-time">${new Date().toLocaleTimeString()}</div>
+                `;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        });
+    </script>
+</body>
+
+</html>
